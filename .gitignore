@@ -1,0 +1,16 @@
+# don't include ever
+TODO.txt
+vendor/*
+composer.lock
+app/settings.php
+teemo_large.jpg
+
+# logs
+*.log
+
+# models & database
+app/models/*
+config/*
+
+# images
+web/images/*

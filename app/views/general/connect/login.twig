@@ -1,0 +1,51 @@
+{% extends "layout.twig" %}
+{% block meta %}
+    <meta name="google-signin-clientid" content="{{ app.social_networks['google'][0] }}" />
+    <meta name="google-signin-scope" content="https://www.googleapis.com/auth/plus.login email" />
+    <meta name="google-signin-requestvisibleactions" content="http://schema.org/AddAction" />
+    <meta name="google-signin-cookiepolicy" content="single_host_origin" />
+{% endblock %}
+
+{% block content %}
+  <div class="col-lg-6 col-lg-offset-3 signin-page">
+    <h2>Connect</h2>
+    <hr>
+    <p>Login with a social network</p>
+    <div class="social-buttons row">
+      <div class="col-lg-6 col-md-6">
+        <a href="#" class="btn btn-lg btn-block facebook-btn" data-fb-app-id="{{ app.social_networks['facebook'][0] }}"><i class="fa fa-fw fa-facebook fa-2x"></i></a>
+      </div>
+      <div class="col-lg-6 col-md-6">
+        <a class="btn btn-lg btn-block google-btn" id="googleSignInBtn"><i class="fa fa-fw fa-google fa-2x"></i></a>
+      </div>
+      <div class="col-lg-12">
+        <hr>
+        {% if error is not empty %}<div class="alert alert-info">{{ error|trans }}</div>{% endif %}
+        <p>Login with your email address</p>
+        <form action="{{ path("login_check") }}" method="POST">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-fw fa-envelope"></i></span>
+            <input type="email" name="_username" id="email" class="form-control input-lg" value="{{ last_username }}" required autofocus>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-fw fa-lock"></i></span>
+            <input type="password" name="_password" id="password" class="form-control input-lg" required>
+          </div>
+        </div>
+        <p class="signin-misc text-right"><a href="btn btn-link"><i class="fa fa-fw fa-user"></i> Register</a> | <a href="btn btn-link"><i class="fa fa-fw fa-question-circle"></i> Forgot password</a></p>
+        <button type="submit" class="btn btn-success btn-md pull-right"><i class="fa fa-fw fa-link"></i> Connect</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://apis.google.com/js/client:platform.js" async defer></script>
+    <script src="{{ baseUrl }}javascripts/jq.signup.js"></script>
+{% endblock %}

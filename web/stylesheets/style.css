@@ -1,0 +1,36 @@
+body{font: 13px "Helvetica Neue",Arial,Helvetica,Geneva,sans-serif;color:#999;}
+/*background: url('http://shapebootstrap.net/demo/html/corlate/images/slider/bg1.jpg') no-repeat;background-size: cover;*/
+h1,h2,h3,h4,h5,h6{font-weight: bold;color:#000;}
+.btn,.form-control{border-radius: 3px !important}
+
+/* Sign in page */
+.signin-page {
+    top: 50px;
+    position: relative;
+}
+.signin-page > .input-group-addon {
+    background-color: transparent !important
+}
+.signin-page > .social-buttons a.btn {
+    color: #FFF;
+    margin-bottom: 5px;
+}
+.social-buttons .facebook-btn {
+    background-color: #3b5998
+}
+    .social-buttons .facebook-btn:hover {
+        color: #FFF;
+        background-color: #4766a6
+    }
+.social-buttons .google-btn {
+    background-color: #DC4D28
+}
+    .social-buttons .google-btn:hover {
+        color: #FFF;
+        background-color: #e95b36
+    }
+.signin-page form {
+    color: #000;
+    padding-top:10px;
+}
+.signin-page > .signin-misc{margin-top:10px}

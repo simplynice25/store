@@ -1,0 +1,33 @@
+{
+    "require": {
+        "silex/silex": "~1.1",
+        "symfony/config": "~2.3",
+        "symfony/console": "~2.3",
+        "symfony/monolog-bridge": "~2.3",
+        "symfony/form": "~2.3",
+        "symfony/validator": "~2.3",
+        "symfony/security": "~2.3",
+        "symfony/security-csrf": "~2.3",
+        "symfony/translation": "~2.3",
+        "symfony/twig-bridge": "~2.3",
+        "twig/twig": ">=1.8,<2.0-dev",
+        "symfony/yaml": "~2.4",
+        "deralex/yaml-config-service-provider": "1.0.x-dev",
+        "swiftmailer/swiftmailer": "5.3.*@dev",
+        "doctrine/dbal": "2.5.*@dev",
+        "doctrine/orm": "2.5.*@dev",
+        "doctrine/common": "2.5.*@dev",
+        "rhumsaa/uuid": "2.8.*@dev",
+        "moontoast/math": "~1.1"
+    },
+    "autoload": {
+        "psr-0": {
+            "dashboard": "app/controllers/",
+            "front": "app/controllers/",
+            "general": "app/controllers/",
+            "libraries": "app/",
+            "models": "app/",
+            "views": "app/"
+        }
+    }
+}
