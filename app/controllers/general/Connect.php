@@ -13,6 +13,7 @@ class Connect
     public static function routes($app) {
         $route = $app["controllers_factory"];
         $route->match("/login-auth", "general\Connect::loginAuth")->bind("login-auth");
+        $route->match("/validate-account", "general\Connect::validateAccount");
 
         return $route;
     }
@@ -34,19 +35,36 @@ class Connect
         return $app["twig"]->render("general/connect/login.twig", $view);
     }
 
+    public function validateAccount(Application $app, Request $req) {
+        $return["message"] = "invalid_account";
+        $id = $req->get("id");
+        $type = $req->get("type");
+        $password = $app['security.encoder.digest']->encodePassword($id, '');
+
+        $account = Tools::findOneBy($app, "\User", array("password" => $password, "account_type" => $type));
+        if ( ! empty($account)) {
+            $return["message"] = $account->getEmail();
+        }
+
+        return json_encode($return);
+    }
+
     public function loginAuth(Application $app, Request $req) {
         $id = $req->get("id");
         $type = $req->get("type");
         $firstName = $req->get("firstName");
         $lastName = $req->get("lastName");
+        $fullName = trim($firstName . " " . $lastName);
         $email = $req->get("email");
         $profile = $req->get("profile");
+        $msg = ["success"];
 
         $register = Tools::findOneBy($app, "\User", array("email" => $email));
         if (empty($register)) {
             /* Set id as password since ID can't be altered and email can change */
             $password = $app['security.encoder.digest']->encodePassword($id, '');
 
+            /* Register the user */
             $register = new \models\User;
             $register->setEmail($email);
             $register->setPassword($password);
@@ -54,14 +72,25 @@ class Connect
             $register->setRoles("ROLE_USER");
             $register->setViewStatus(5);
             $register->setCreatedAt("now");
-            $register->setModifiedAt("now");
             $app['orm.em']->persist($register);
             $app['orm.em']->flush();
 
+            /* Update the user UUID */
             $updateUser = Tools::findOneBy($app, "\User", array("email" => $email));
             $updateUser->setUuid(Tools::uuid($register->getId()));
             $updateUser->setModifiedAt("now");
             $app['orm.em']->persist($updateUser);
+            $app['orm.em']->flush();
+
+            /* Create user profile */
+            $profile = new \models\UserProfile;
+            $profile->setUser($register);
+            $profile->setFirstname($firstName);
+            $profile->setLastname($lastName);
+            $profile->setFullname($fullName);
+            $profile->setViewStatus(5);
+            $profile->setCreatedAt("now");
+            $app['orm.em']->persist($profile);
             $app['orm.em']->flush();
         }
 
@@ -69,6 +98,6 @@ class Connect
         $user = $userProvider->loadUserByUsername($email);
         $app['security']->setToken(new UsernamePasswordToken($user, $user->getPassword(), 'default', $user->getRoles()));
 
-        return json_encode(array("message" => "success"));
+        return json_encode(array("message" => $msg[0]));
     }
 }
