@@ -103,12 +103,17 @@
     var socialRegistration = {
         userData: null,
         process: function(userData) {
+            var type = userData.type, btn = $("." + type + "-btn").find("i.fa");
             if ( ! userData.email) {
-                socialRegistration.validateAcc(userData);
+                FB.api("/me/permissions", "DELETE", function(response){
+                    if (response.success) {
+                        alert("User permission deleted!");
+                        btn.removeClass("fa-circle-o-notch fa-spin").addClass("fa-" + type);
+                    }
+                });
+                //socialRegistration.validateAcc(userData);
                 return false;
             }
-
-            var type = userData.type, btn = $("." + type + "-btn").find("i.fa");
 
             $.get("connect/login-auth", userData)
             .done(function(data) {
