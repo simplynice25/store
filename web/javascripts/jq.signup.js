@@ -121,13 +121,15 @@
             })
             .always(function() {
                 btn.removeClass("fa-circle-o-notch fa-spin").addClass("fa-" + type);
-            })
+            });
+
+            return true;
         },
         validateAcc: function(userData) {
             $.get("connect/validate-account", userData)
             .done(function(data) {
                 data = jQuery.parseJSON( data );
-                if (data.message == "invalid_acc") {
+                if (data.message == "invalid_account") {
                     socialRegistration.userData = userData;
                     socialRegistration.emailForm();
                 } else {
@@ -153,11 +155,30 @@
                 if ( ! email) {
                     emailBox.focus();
                 } else {
-                    noEmail.addClass('hide');
-                    socialRegistration.userData.email = email;
-                    socialRegistration.process(socialRegistration.userData);
+                    emailBtn.find("i.fa").removeClass("fa-envelope-o").addClass("fa-circle-o-notch fa-spin");
+                    $.get("connect/validate-email", {email:email})
+                    .done(function(data) {
+                        data = jQuery.parseJSON( data );
+                        if (data.message == "invalid_email") {
+                            alert("Email is invalid!");
+                        } else if (data.message == "email_in_use") {
+                            alert("Email is already in use!");
+                        } else {
+                            noEmail.addClass('hide');
+                            socialRegistration.userData.email = email;
+                            socialRegistration.process(socialRegistration.userData);
+                            return true;
+                        }
+
+                        emailBox.focus();
+                    })
+                    .fail(function() {
+                        console.log("Failed to process ...");
+                    });
                 }
             });
+
+            return true;
         },
     };
 

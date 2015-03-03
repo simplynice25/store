@@ -1,6 +1,7 @@
 body{font: 13px "Helvetica Neue",Arial,Helvetica,Geneva,sans-serif;color:#999;}
 /*background: url('http://shapebootstrap.net/demo/html/corlate/images/slider/bg1.jpg') no-repeat;background-size: cover;*/
 h1,h2,h3,h4,h5,h6{font-weight: bold;color:#000;}
+.btm-space{height:80px;width: 100%;float:left;position: relative;}
 .btn,.form-control{border-radius: 3px !important}
 
 /* Sign in page */

@@ -14,6 +14,7 @@ class Connect
         $route = $app["controllers_factory"];
         $route->match("/login-auth", "general\Connect::loginAuth")->bind("login-auth");
         $route->match("/validate-account", "general\Connect::validateAccount");
+        $route->match("/validate-email", "general\Connect::validateEmail");
 
         return $route;
     }
@@ -43,7 +44,27 @@ class Connect
 
         $account = Tools::findOneBy($app, "\User", array("password" => $password, "account_type" => $type));
         if ( ! empty($account)) {
-            $return["message"] = $account->getEmail();
+            $email = $account->getEmail();
+            if ( ! empty($email)) {
+                $return["message"] = $email;
+            }
+        }
+
+        return json_encode($return);
+    }
+
+    public function validateEmail(Application $app, Request $req) {
+        $email = $req->get("email");
+        $return["message"] = "invalid_email";
+        if ( ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return json_encode($return);
+        } else {
+            $check = Tools::findOneBy($app, "\User", array("email" => $email));
+            if ( ! empty($check)) {
+                $return["message"] = "email_in_use";
+            } else {
+                $return["message"] = "email_is_available";
+            }
         }
 
         return json_encode($return);
