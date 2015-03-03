@@ -36,10 +36,10 @@ class Connect
         return $app["twig"]->render("general/connect/login.twig", $view);
     }
 
-    public function validateAccount(Application $app, Request $req) {
+    public function validateAccount(Application $app, Request $req, $data = null) {
         $return["message"] = "invalid_account";
-        $id = $req->get("id");
-        $type = $req->get("type");
+        $id = ( ! is_null($data)) ? $data[0] : $req->get("id");
+        $type = ( ! is_null($data)) ? $data[1] : $req->get("type");
         $password = $app['security.encoder.digest']->encodePassword($id, '');
 
         $account = Tools::findOneBy($app, "\User", array("password" => $password, "account_type" => $type));
@@ -79,6 +79,12 @@ class Connect
         $email = $req->get("email");
         $profile = $req->get("profile");
         $msg = ["success"];
+
+        $validate = self::validateAccount($app, $req, $data = [$id, $type]);
+        $decoded = json_decode($validate);
+        if ($decoded->message != "invalid_account" && $email != $decoded->message) {
+            $email = $decoded->message;
+        }
 
         $register = Tools::findOneBy($app, "\User", array("email" => $email));
         if (empty($register)) {

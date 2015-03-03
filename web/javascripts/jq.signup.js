@@ -97,7 +97,8 @@
      * @socialRegistration.validateAcc will take cover which will check if the user is already registered then
      * it will can @socialRegistration.process else 
      * @socialRegistration.emailForm will take cover which will unhide the email form
-     * where user will input his/her email and submit and call again @socialRegistration.process to log the user
+     * where user will input his/her email and will validate the email
+     * if valid call again @socialRegistration.process to log the user
      */
     var socialRegistration = {
         userData: null,
