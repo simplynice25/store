@@ -13,6 +13,8 @@ class Connect
     public static function routes($app) {
         $route = $app["controllers_factory"];
         $route->match("/login-auth", "general\Connect::loginAuth")->bind("login-auth");
+        $route->match("/validate-account", "general\Connect::validateAccount");
+        $route->match("/validate-email", "general\Connect::validateEmail");
 
         return $route;
     }
@@ -34,6 +36,40 @@ class Connect
         return $app["twig"]->render("general/connect/login.twig", $view);
     }
 
+    public function validateAccount(Application $app, Request $req, $data = null) {
+        $return["message"] = "invalid_account";
+        $id = ( ! is_null($data)) ? $data[0] : $req->get("id");
+        $type = ( ! is_null($data)) ? $data[1] : $req->get("type");
+        $password = $app['security.encoder.digest']->encodePassword($id, '');
+
+        $account = Tools::findOneBy($app, "\User", array("password" => $password, "account_type" => $type));
+        if ( ! empty($account)) {
+            $email = $account->getEmail();
+            if ( ! empty($email)) {
+                $return["message"] = $email;
+            }
+        }
+
+        return json_encode($return);
+    }
+
+    public function validateEmail(Application $app, Request $req) {
+        $email = $req->get("email");
+        $return["message"] = "invalid_email";
+        if ( ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return json_encode($return);
+        } else {
+            $check = Tools::findOneBy($app, "\User", array("email" => $email));
+            if ( ! empty($check)) {
+                $return["message"] = "email_in_use";
+            } else {
+                $return["message"] = "email_is_available";
+            }
+        }
+
+        return json_encode($return);
+    }
+
     public function loginAuth(Application $app, Request $req) {
         $id = $req->get("id");
         $type = $req->get("type");
@@ -43,6 +79,12 @@ class Connect
         $email = $req->get("email");
         $profile = $req->get("profile");
         $msg = ["success"];
+
+        $validate = self::validateAccount($app, $req, $data = [$id, $type]);
+        $decoded = json_decode($validate);
+        if ($decoded->message != "invalid_account" && $email != $decoded->message) {
+            $email = $decoded->message;
+        }
 
         $register = Tools::findOneBy($app, "\User", array("email" => $email));
         if (empty($register)) {
